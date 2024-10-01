@@ -40,7 +40,7 @@ if (!empty($_POST['submit'])) {
             <div class="alert alert-warning" role="alert">
                 User form
             </div>
-            <form method="POST">
+            <form method="POST" id="userForm">
                 <input type="hidden" name="id" value="<?php echo $_id ?>">
                 <div class="form-group">
                     <label for="name">Name</label>
@@ -59,19 +59,10 @@ if (!empty($_POST['submit'])) {
 
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        class="form-control"
-                        placeholder="Password"
-                        required
-                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^&*()]).{5,10}$"
-                        minlength="5"
-                        maxlength="10"
-                        title="Password phải nhập tối thiểu 5 kí tự, tối đa 10 kí tự, tối thiểu 1 chữ hoa, 1 chữ thường, 1 chữ số và 1 kí tự đặc biệt.">
-                </div>
-
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Password">
+                        <small id="passwordError" class="form-text" style="color: red;"></small>
+                    </div>
                 <button type="submit" name="submit" value="submit" class="btn btn-primary">Submit</button>
             </form>
         <?php } else { ?>
@@ -82,4 +73,28 @@ if (!empty($_POST['submit'])) {
     </div>
 </body>
 
-</html>
+<script>
+    document.getElementById('userForm').addEventListener('submit', function(event) {
+        var isValid = true;
+        document.getElementById('passwordError').textContent = '';
+
+        // Validate Password
+        var password = document.getElementById('password').value;
+        var validatePassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^&*()])[A-Za-z\d~!@#$%^&*()]{5,10}$/;
+
+        if (password.trim() === '') {
+            document.getElementById('passwordError').textContent = 'Vui lòng nhập Password';
+            isValid = false;
+        } else if (password.includes(' ')) {
+            document.getElementById('passwordError').textContent = 'Password không được chứa ký tự khoảng trắng';
+            isValid = false;
+        } else if (!validatePassword.test(password)) {
+            document.getElementById('passwordError').textContent = 'Password phải nhập tối thiểu 5 kí tự, tối đa 10 kí tự, tối thiểu 1 chữ hoa, 1 chữ thường, 1 chữ số và 1 kí tự đặc biệt';
+            isValid = false;
+        }
+
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+</script>
